@@ -1,13 +1,11 @@
 from typing import Literal
 
 from langchain_core.messages import AIMessage, ToolMessage
-from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
-from snowlangsql import config
 from snowlangsql.entities import State
-from snowlangsql.tools import db_query_tool, get_schema_tool, list_tables_tool, query_check, query_gen
+from snowlangsql.tools import db_query_tool, get_schema_tool, list_tables_tool, model_get_schema, query_check, query_gen
 from snowlangsql.util import create_tool_node_with_fallback
 
 
@@ -36,7 +34,7 @@ def model_check_query(state: State) -> dict[str, list[AIMessage]]:
     return {"messages": [query_check.invoke({"messages": [state["messages"][-1]]})]}
 
 
-def query_gen_node(state: State):
+def query_gen_node(state: State) -> dict[str, list[AIMessage]]:
     message = query_gen.invoke(state)
 
     # Sometimes, the LLM will hallucinate and call the wrong tool. We need to catch this and return an error message.
@@ -56,7 +54,7 @@ def query_gen_node(state: State):
 
 
 # Define a conditional edge to decide whether to continue or end the workflow
-def should_continue(state: State) -> Literal[END, "correct_query", "query_gen"]:
+def should_continue(state: State) -> Literal[END, "correct_query", "query_gen"]:  # type: ignore
     messages = state["messages"]
     last_message = messages[-1]
     # If there is a tool call, then we finish
@@ -81,8 +79,6 @@ def build_workflow() -> CompiledStateGraph:
     workflow.add_node("list_tables_tool", create_tool_node_with_fallback([list_tables_tool]))
     workflow.add_node("get_schema_tool", create_tool_node_with_fallback([get_schema_tool]))
 
-    # Add a node for a model to choose the relevant tables based on the question and available tables
-    model_get_schema = ChatOpenAI(model=config.TOOLS_LLM_MODEL_NAME, temperature=0).bind_tools([get_schema_tool])
     workflow.add_node(
         "model_get_schema",
         lambda state: {

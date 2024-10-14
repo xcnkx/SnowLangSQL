@@ -24,6 +24,10 @@ list_tables_tool = next(tool for tool in tools if tool.name == "sql_db_list_tabl
 get_schema_tool = next(tool for tool in tools if tool.name == "sql_db_schema")
 
 
+# Add a node for a model to choose the relevant tables based on the question and available tables
+model_get_schema = ChatOpenAI(model=config.TOOLS_LLM_MODEL_NAME, temperature=0).bind_tools([get_schema_tool])
+
+
 @tool
 def db_query_tool(query: str) -> str:
     """
