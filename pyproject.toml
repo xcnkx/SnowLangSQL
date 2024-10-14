@@ -1,0 +1,12 @@
+[project]
+name = "snowlangsql"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "langchain-community>=0.3.2",
+    "langchain-openai>=0.2.2",
+    "langgraph>=0.2.35",
+    "snowflake-connector-python>=3.12.2",
+]
