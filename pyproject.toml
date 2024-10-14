@@ -8,7 +8,10 @@ dependencies = [
     "langchain-community>=0.3.2",
     "langchain-openai>=0.2.2",
     "langgraph>=0.2.35",
+    "mypy>=1.11.2",
+    "ruff>=0.6.9",
     "snowflake-connector-python>=3.12.2",
+    "sqlalchemy>=2.0.35",
 ]
 
 [tool.uv]
@@ -19,3 +22,28 @@ dev-dependencies = [
 
 [project.scripts]
 snowlangsql = "snowlangsql:hello"
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 120
+extend-include = ["*.ipynb"]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
+ignore = ["SIM108"]
