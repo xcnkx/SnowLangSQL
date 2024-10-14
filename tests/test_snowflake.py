@@ -48,3 +48,17 @@ def test_get_connection(snowflake_repository):
             assert role is not None, "ロール情報が取得できませんでした"
     except SQLAlchemyError as e:
         pytest.fail(f"クエリの実行に失敗しました: {e}")
+
+
+def test_get_sqldatabase(snowflake_repository):
+    sqldatabase = snowflake_repository.get_sqldatabase()
+
+    assert sqldatabase is not None, "SQLDatabaseのインスタンスが取得できません"
+
+    try:
+        # 実際にデータベースに接続してテスト
+        result = sqldatabase.get_usable_table_names()
+        print(f"Usable table names: {result}")
+        assert len(result) > 0, "テーブル名が取得できませんでした"
+    except SQLAlchemyError as e:
+        pytest.fail(f"テーブル名の取得に失敗しました: {e}")

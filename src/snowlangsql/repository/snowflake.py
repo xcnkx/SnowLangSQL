@@ -1,3 +1,4 @@
+from langchain_community.utilities import SQLDatabase
 from snowflake.sqlalchemy import URL
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Connection, Engine
@@ -29,3 +30,6 @@ class SnowflakeRepository:
 
     def get_connection(self) -> Connection:
         return self.engine.connect()
+
+    def get_sqldatabase(self) -> SQLDatabase:
+        return SQLDatabase(self.engine)
