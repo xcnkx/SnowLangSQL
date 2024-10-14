@@ -10,3 +10,9 @@ dependencies = [
     "langgraph>=0.2.35",
     "snowflake-connector-python>=3.12.2",
 ]
+
+[tool.uv]
+package = true
+
+[project.scripts]
+snowlangsql = "snowlangsql:hello"

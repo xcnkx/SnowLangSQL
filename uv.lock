@@ -1001,7 +1001,7 @@ wheels = [
 [[package]]
 name = "snowlangsql"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "langchain-community" },
     { name = "langchain-openai" },
