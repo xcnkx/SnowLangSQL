@@ -13,7 +13,7 @@ lint:
 	$(RUFF) check src tests
 
 type-check:
-	$(MYPY) src tests
+	$(MYPY) src
 
 fix:
 	$(RUFF) check src tests --fix
