@@ -21,3 +21,6 @@ fix:
 
 test:
 	$(PYTEST) -vv ./tests/$(TEST_TARGET)
+
+run:
+	$(UV) run streamlit run app.py

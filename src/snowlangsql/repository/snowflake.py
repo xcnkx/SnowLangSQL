@@ -32,4 +32,4 @@ class SnowflakeRepository:
         return self.engine.connect()
 
     def get_sqldatabase(self) -> SQLDatabase:
-        return SQLDatabase(self.engine)
+        return SQLDatabase(self.engine, view_support=True)

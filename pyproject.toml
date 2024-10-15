@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "duckduckgo-search>=6.3.1",
     "langchain-community>=0.3.2",
     "langchain-openai>=0.2.2",
     "langgraph>=0.2.35",
@@ -15,6 +16,7 @@ dependencies = [
     "snowflake-connector-python[secure-local-storage]>=3.12.2",
     "snowflake-sqlalchemy>=1.6.1",
     "sqlalchemy>=2.0.35",
+    "streamlit>=1.39.0",
 ]
 
 [tool.uv]

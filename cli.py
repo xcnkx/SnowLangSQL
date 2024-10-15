@@ -1,32 +1,33 @@
 import argparse
 
-from langchain_core.runnables.graph import MermaidDrawMethod
+from langchain_core.messages import HumanMessage
+from langchain_openai.chat_models import ChatOpenAI
 
-from snowlangsql.workflow import build_workflow
+from snowlangsql import config
+from snowlangsql.agent import Agent
+from snowlangsql.repository.snowflake import SnowflakeRepository
 
 
-def display_graph():
-    workflow = build_workflow()
-    img_data = workflow.get_graph().draw_mermaid_png(
-        draw_method=MermaidDrawMethod.API,
+def query(query: str) -> None:
+    snowflake_repository = SnowflakeRepository(
+        account=config.SNOWFLAKE_ACCOUNT,
+        user=config.SNOWFLAKE_USER,
+        warehouse=config.SNOWFLAKE_WAREHOUSE,
+        database=config.SNOWFLAKE_DATABASE,
+        schema=config.SNOWFLAKE_SCHEMA,
     )
-    with open("imgs/workflow_graph.png", "wb") as f:
-        f.write(img_data)
-    print("画像が 'workflow_graph.png' に保存されました。")
+    llm = ChatOpenAI(model=config.TOOLS_LLM_MODEL_NAME, temperature=0)
+    agent = Agent(llm=llm, repository=snowflake_repository)
 
+    graph = agent.get_graph()
 
-def query(query: str):
-    workflow = build_workflow()
-    messages = workflow.invoke(
-        {
-            "messages": [
-                ("user", query),
-            ]
-        }
-    )
-
-    result = messages["messages"][-1].tool_calls[0]["args"]["final_answer"]
-    return result
+    inputs = {"messages": [HumanMessage(content=query)]}
+    for s in graph.stream(inputs, stream_mode="values"):
+        message = s["messages"][-1]
+        if isinstance(message, tuple):
+            print(message)
+        else:
+            message.pretty_print()
 
 
 def main():
@@ -43,11 +44,8 @@ def main():
     )
     args = parser.parse_args()
 
-    if args.display_graph:
-        display_graph()
-    elif args.query:
-        result = query(args.query)
-        print(result)
+    if args.query:
+        query(args.query)
 
 
 if __name__ == "__main__":
