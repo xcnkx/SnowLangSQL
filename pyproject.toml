@@ -5,8 +5,57 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "duckduckgo-search>=6.3.1",
     "langchain-community>=0.3.2",
     "langchain-openai>=0.2.2",
     "langgraph>=0.2.35",
-    "snowflake-connector-python>=3.12.2",
+    "mypy>=1.11.2",
+    "pydantic>=2.9.2",
+    "pydotenv>=0.0.7",
+    "ruff>=0.6.9",
+    "snowflake-connector-python[secure-local-storage]>=3.12.2",
+    "snowflake-sqlalchemy>=1.6.1",
+    "sqlalchemy>=2.0.35",
+    "streamlit>=1.39.0",
 ]
+
+[tool.uv]
+package = true
+dev-dependencies = [
+    "pytest>=8.3.3",
+]
+
+[project.scripts]
+snowlangsql = "snowlangsql:hello"
+
+[tool.mypy]
+ignore_missing_imports = true
+disallow_untyped_defs = true
+explicit_package_bases = true
+warn_no_return = false
+warn_unused_ignores = true
+warn_redundant_casts = true
+allow_redefinition = true
+disable_error_code = "typeddict-item, return-value"
+
+[tool.ruff]
+line-length = 120
+extend-include = ["*.ipynb"]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
+ignore = ["SIM108"]
