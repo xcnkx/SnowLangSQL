@@ -2,7 +2,6 @@ import streamlit as st
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 from langchain_openai.chat_models import ChatOpenAI
 
-from snowlangsql import config
 from snowlangsql.agent import Agent
 from snowlangsql.repository.snowflake import SnowflakeRepository
 from snowlangsql.st_callable_util import get_streamlit_cb
@@ -18,7 +17,12 @@ def run_graph(messages: list[AnyMessage], config_params: dict) -> str:
             database=config_params["SNOWFLAKE_DATABASE"],
             schema=config_params["SNOWFLAKE_SCHEMA"],
         )
-        llm = ChatOpenAI(model=config_params["TOOLS_LLM_MODEL_NAME"], temperature=0, streaming=True)
+        llm = ChatOpenAI(
+            model=config_params["TOOLS_LLM_MODEL_NAME"],
+            temperature=0,
+            streaming=True,
+            openai_api_key=config_params["OPENAI_API_KEY"],
+        )
         agent = Agent(llm=llm, repository=snowflake_repository)
 
         graph = agent.get_graph()
@@ -41,11 +45,13 @@ def main():
 
     # サイドバーでの設定入力
     st.sidebar.title("設定")
-    SNOWFLAKE_ACCOUNT = config.SNOWFLAKE_ACCOUNT
-    SNOWFLAKE_USER = config.SNOWFLAKE_USER
-    SNOWFLAKE_WAREHOUSE = st.sidebar.text_input("Snowflakeウェアハウス", value=config.SNOWFLAKE_WAREHOUSE)
-    SNOWFLAKE_DATABASE = st.sidebar.text_input("Snowflakeデータベース", value=config.SNOWFLAKE_DATABASE)
-    SNOWFLAKE_SCHEMA = st.sidebar.text_input("Snowflakeスキーマ", value=config.SNOWFLAKE_SCHEMA)
+    SNOWFLAKE_ACCOUNT = st.sidebar.text_input("Snowflakeアカウント")
+    SNOWFLAKE_USER = st.sidebar.text_input("Snowflakeユーザー名")
+    SNOWFLAKE_PASSWORD = st.sidebar.text_input("Snowflakeパスワード", type="password")
+    SNOWFLAKE_WAREHOUSE = st.sidebar.text_input("Snowflakeウェアハウス")
+    SNOWFLAKE_DATABASE = st.sidebar.text_input("Snowflakeデータベース")
+    SNOWFLAKE_SCHEMA = st.sidebar.text_input("Snowflakeスキーマ")
+    OPENAI_API_KEY = st.sidebar.text_input("OpenAI APIキー", type="password")
     TOOLS_LLM_MODEL_NAME = st.sidebar.selectbox("Chat OpenAIモデル", ("gpt-4o", "gpt-4o-mini"), index=0)
 
     # 区切り線を追加
@@ -59,10 +65,11 @@ def main():
     config_params = {
         "SNOWFLAKE_ACCOUNT": SNOWFLAKE_ACCOUNT,
         "SNOWFLAKE_USER": SNOWFLAKE_USER,
+        "SNOWFLAKE_PASSWORD": SNOWFLAKE_PASSWORD,
         "SNOWFLAKE_WAREHOUSE": SNOWFLAKE_WAREHOUSE,
-        "SNOWFLAKE_PASSWORD": config.SNOWFLAKE_PASSWORD,
         "SNOWFLAKE_DATABASE": SNOWFLAKE_DATABASE,
         "SNOWFLAKE_SCHEMA": SNOWFLAKE_SCHEMA,
+        "OPENAI_API_KEY": OPENAI_API_KEY,
         "TOOLS_LLM_MODEL_NAME": TOOLS_LLM_MODEL_NAME,
     }
 
