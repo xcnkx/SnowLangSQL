@@ -13,6 +13,7 @@ def run_graph(messages: list[AnyMessage], config_params: dict) -> str:
         snowflake_repository = SnowflakeRepository(
             account=config_params["SNOWFLAKE_ACCOUNT"],
             user=config_params["SNOWFLAKE_USER"],
+            password=config_params["SNOWFLAKE_PASSWORD"],
             warehouse=config_params["SNOWFLAKE_WAREHOUSE"],
             database=config_params["SNOWFLAKE_DATABASE"],
             schema=config_params["SNOWFLAKE_SCHEMA"],
@@ -59,6 +60,7 @@ def main():
         "SNOWFLAKE_ACCOUNT": SNOWFLAKE_ACCOUNT,
         "SNOWFLAKE_USER": SNOWFLAKE_USER,
         "SNOWFLAKE_WAREHOUSE": SNOWFLAKE_WAREHOUSE,
+        "SNOWFLAKE_PASSWORD": config.SNOWFLAKE_PASSWORD,
         "SNOWFLAKE_DATABASE": SNOWFLAKE_DATABASE,
         "SNOWFLAKE_SCHEMA": SNOWFLAKE_SCHEMA,
         "TOOLS_LLM_MODEL_NAME": TOOLS_LLM_MODEL_NAME,
