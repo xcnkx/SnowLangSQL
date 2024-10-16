@@ -12,6 +12,7 @@ def query(query: str) -> None:
     snowflake_repository = SnowflakeRepository(
         account=config.SNOWFLAKE_ACCOUNT,
         user=config.SNOWFLAKE_USER,
+        password=config.SNOWFLAKE_PASSWORD,
         warehouse=config.SNOWFLAKE_WAREHOUSE,
         database=config.SNOWFLAKE_DATABASE,
         schema=config.SNOWFLAKE_SCHEMA,
