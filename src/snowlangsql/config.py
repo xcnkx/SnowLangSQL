@@ -2,7 +2,14 @@ import os
 
 from dotenv import load_dotenv
 
-load_dotenv()
+# 現在のスクリプトのディレクトリを取得
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# リポジトリのルートディレクトリを取得（2階層上）
+repo_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
+
+# リポジトリのルートにある .env ファイルをロード
+load_dotenv(dotenv_path=os.path.join(repo_root, ".env"), override=True)
 
 SNOWFLAKE_ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT")
 SNOWFLAKE_USER = os.getenv("SNOWFLAKE_USER")

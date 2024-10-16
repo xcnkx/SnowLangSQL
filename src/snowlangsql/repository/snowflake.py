@@ -15,7 +15,7 @@ class SnowflakeRepository:
         authenticator: str = "externalbrowser",
         password: str | None = None,
     ) -> None:
-        if password is not None:
+        if password is None:
             self.engine = create_engine(
                 URL(
                     account=account,
