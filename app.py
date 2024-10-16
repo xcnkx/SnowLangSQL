@@ -47,6 +47,13 @@ def main():
     SNOWFLAKE_SCHEMA = st.sidebar.text_input("Snowflakeスキーマ", value=config.SNOWFLAKE_SCHEMA)
     TOOLS_LLM_MODEL_NAME = st.sidebar.selectbox("Chat OpenAIモデル", ("gpt-4o", "gpt-4o-mini"), index=0)
 
+    # 区切り線を追加
+    st.sidebar.markdown("---")
+
+    # リセットボタン
+    if st.sidebar.button("メッセージをリセット", type="primary"):
+        st.session_state["messages"] = [AIMessage(content="ご用件をお聞かせください。")]
+
     # 設定パラメータを辞書にまとめる
     config_params = {
         "SNOWFLAKE_ACCOUNT": SNOWFLAKE_ACCOUNT,
