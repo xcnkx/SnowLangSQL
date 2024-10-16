@@ -15,8 +15,11 @@ def snowflake_repository():
     warehouse = config.SNOWFLAKE_WAREHOUSE
     database = config.SNOWFLAKE_DATABASE
     schema = config.SNOWFLAKE_SCHEMA
+    password = config.SNOWFLAKE_PASSWORD
 
-    return SnowflakeRepository(account=account, user=user, warehouse=warehouse, database=database, schema=schema)
+    return SnowflakeRepository(
+        account=account, user=user, warehouse=warehouse, database=database, schema=schema, password=password
+    )
 
 
 def test_get_engine(snowflake_repository):

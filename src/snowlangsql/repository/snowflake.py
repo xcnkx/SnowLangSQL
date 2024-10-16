@@ -13,17 +13,30 @@ class SnowflakeRepository:
         database: str,
         schema: str,
         authenticator: str = "externalbrowser",
+        password: str | None = None,
     ) -> None:
-        self.engine = create_engine(
-            URL(
-                account=account,
-                user=user,
-                warehouse=warehouse,
-                database=database,
-                schema=schema,
-                authenticator=authenticator,
+        if password is not None:
+            self.engine = create_engine(
+                URL(
+                    account=account,
+                    user=user,
+                    warehouse=warehouse,
+                    database=database,
+                    schema=schema,
+                    authenticator=authenticator,
+                )
             )
-        )
+        else:
+            self.engine = create_engine(
+                URL(
+                    account=account,
+                    user=user,
+                    warehouse=warehouse,
+                    database=database,
+                    schema=schema,
+                    password=password,
+                )
+            )
 
     def get_engine(self) -> Engine:
         return self.engine
