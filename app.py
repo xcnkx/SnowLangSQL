@@ -13,10 +13,12 @@ def run_graph(messages: list[AnyMessage], config_params: dict) -> str:
         snowflake_repository = SnowflakeRepository(
             account=config_params["SNOWFLAKE_ACCOUNT"],
             user=config_params["SNOWFLAKE_USER"],
-            password=config_params["SNOWFLAKE_PASSWORD"],
             warehouse=config_params["SNOWFLAKE_WAREHOUSE"],
             database=config_params["SNOWFLAKE_DATABASE"],
             schema=config_params["SNOWFLAKE_SCHEMA"],
+            role=config_params.get("SNOWFLAKE_ROLE"),
+            private_key_path=config_params.get("SNOWFLAKE_PRIVATE_KEY_PATH"),
+            private_key_passphrase=config_params.get("SNOWFLAKE_PRIVATE_KEY_PASSPHRASE"),
         )
         llm = ChatOpenAI(model=config_params["TOOLS_LLM_MODEL_NAME"], temperature=0, streaming=True)
         agent = Agent(llm=llm, repository=snowflake_repository)
@@ -46,7 +48,7 @@ def main():
     SNOWFLAKE_WAREHOUSE = st.sidebar.text_input("Snowflakeウェアハウス", value=config.SNOWFLAKE_WAREHOUSE)
     SNOWFLAKE_DATABASE = st.sidebar.text_input("Snowflakeデータベース", value=config.SNOWFLAKE_DATABASE)
     SNOWFLAKE_SCHEMA = st.sidebar.text_input("Snowflakeスキーマ", value=config.SNOWFLAKE_SCHEMA)
-    TOOLS_LLM_MODEL_NAME = st.sidebar.selectbox("Chat OpenAIモデル", ("gpt-4o", "gpt-4o-mini"), index=0)
+    TOOLS_LLM_MODEL_NAME = st.sidebar.selectbox("Chat OpenAIモデル", ("gpt-4o", "gpt-4o-mini", "gpt-4.1"), index=0)
 
     # 区切り線を追加
     st.sidebar.markdown("---")
@@ -60,14 +62,20 @@ def main():
         "SNOWFLAKE_ACCOUNT": SNOWFLAKE_ACCOUNT,
         "SNOWFLAKE_USER": SNOWFLAKE_USER,
         "SNOWFLAKE_WAREHOUSE": SNOWFLAKE_WAREHOUSE,
-        "SNOWFLAKE_PASSWORD": config.SNOWFLAKE_PASSWORD,
         "SNOWFLAKE_DATABASE": SNOWFLAKE_DATABASE,
         "SNOWFLAKE_SCHEMA": SNOWFLAKE_SCHEMA,
+        "SNOWFLAKE_ROLE": config.SNOWFLAKE_ROLE,
         "TOOLS_LLM_MODEL_NAME": TOOLS_LLM_MODEL_NAME,
     }
 
     # 必須の設定が全て入力されているか確認
     if all(config_params.values()):
+        # Snowflakeへの接続情報を追加
+        config_params.update({
+            "SNOWFLAKE_PRIVATE_KEY_PATH": config.SNOWFLAKE_PRIVATE_KEY_PATH,
+            "SNOWFLAKE_PRIVATE_KEY_PASSPHRASE": config.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE,
+        })
+
         # メッセージのセッション状態を初期化
         if "messages" not in st.session_state:
             st.session_state["messages"] = [AIMessage(content="ご用件をお聞かせください。")]
