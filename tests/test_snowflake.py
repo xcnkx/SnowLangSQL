@@ -1,3 +1,4 @@
+import os
 import pytest
 from sqlalchemy import text
 from sqlalchemy.engine.base import Engine
@@ -15,10 +16,20 @@ def snowflake_repository():
     warehouse = config.SNOWFLAKE_WAREHOUSE
     database = config.SNOWFLAKE_DATABASE
     schema = config.SNOWFLAKE_SCHEMA
-    password = config.SNOWFLAKE_PASSWORD
+    role = config.SNOWFLAKE_ROLE
+    private_key_path = config.SNOWFLAKE_PRIVATE_KEY_PATH
+    private_key_passphrase = config.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE
 
+    # 秘密鍵が設定されていればKey-Pair認証、なければSSO認証
     return SnowflakeRepository(
-        account=account, user=user, warehouse=warehouse, database=database, schema=schema, password=password
+        account=account,
+        user=user,
+        warehouse=warehouse,
+        database=database,
+        schema=schema,
+        role=role,
+        private_key_path=private_key_path,
+        private_key_passphrase=private_key_passphrase
     )
 
 
