@@ -20,16 +20,16 @@ class SnowflakeRepository:
         private_key_passphrase: str | None = None,
         authenticator: str = "externalbrowser",
     ) -> None:
-        url_kwargs = {
+        self.url_kwargs = {
             "account": account,
             "user": user,
             "warehouse": warehouse,
             "database": database,
         }
         if schema:
-            url_kwargs["schema"] = schema
+            self.url_kwargs["schema"] = schema
         if role:
-            url_kwargs["role"] = role
+            self.url_kwargs["role"] = role
 
         if private_key_path:
             # Key-Pair認証
@@ -50,12 +50,12 @@ class SnowflakeRepository:
 
             # Snowflakeエンジンを作成（Key-Pair認証）
             self.engine = create_engine(
-                URL(**url_kwargs),
+                URL(**self.url_kwargs),
                 connect_args={"private_key": pkb},
             )
         else:
             # SSO認証（externalbrowser）
-            url_kwargs_auth = url_kwargs.copy()
+            url_kwargs_auth = self.url_kwargs.copy()
             url_kwargs_auth["authenticator"] = authenticator
             self.engine = create_engine(
                 URL(**url_kwargs_auth)
@@ -68,4 +68,8 @@ class SnowflakeRepository:
         return self.engine.connect()
 
     def get_sqldatabase(self) -> SQLDatabase:
-        return SQLDatabase(self.engine, view_support=True)
+        # Ensure we use the full search path including database name for schema operations
+        return SQLDatabase(
+            self.engine,
+            view_support=True
+        )
